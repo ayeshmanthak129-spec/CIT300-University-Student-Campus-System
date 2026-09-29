@@ -1,5 +1,7 @@
 package university.model;
+
 public class Student {
+
     private int studentId;
     private String name;
     private String programme;
@@ -16,24 +18,28 @@ public class Student {
         return studentId;
     }
 
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public String getProgramme() {
-        return programme;
-    }
-
-    public double getMarks() {
-        return marks;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getProgramme() {
+        return programme;
+    }
+
     public void setProgramme(String programme) {
         this.programme = programme;
+    }
+
+    public double getMarks() {
+        return marks;
     }
 
     public void setMarks(double marks) {
@@ -42,9 +48,9 @@ public class Student {
 
     @Override
     public String toString() {
-        return "ID: " + studentId
-                + " | Name: " + name
-                + " | Programme: " + programme
-                + " | Marks: " + marks;
+        return "Student ID: " + studentId +
+                ", Name: " + name +
+                ", Programme: " + programme +
+                ", Marks: " + marks;
     }
 }
