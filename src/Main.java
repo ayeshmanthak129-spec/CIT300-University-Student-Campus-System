@@ -7,10 +7,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         Graph campusGraph = new Graph();
+        ActionStack actionStack = new ActionStack();
+        ServiceQueue serviceQueue = new ServiceQueue();
 
         while (true) {
 
-            System.out.println("\n===== CAMPUS ROUTE MANAGEMENT SYSTEM =====");
+            System.out.println("\n===== CAMPUS ROUTE & SERVICE MANAGEMENT SYSTEM =====");
+            System.out.println("--- Campus Route & Location Operations ---");
             System.out.println("1. Add Campus Location");
             System.out.println("2. Remove Campus Location");
             System.out.println("3. Add Campus Connection/Road");
@@ -18,7 +21,14 @@ public class Main {
             System.out.println("5. Display Campus Connections");
             System.out.println("6. Display Campus Locations");
             System.out.println("7. Traverse Campus Locations using BFS");
-            System.out.println("8. Exit");
+            System.out.println("--- Action History & Undo (Stack - LIFO) ---");
+            System.out.println("8. Undo Last Action (LIFO)");
+            System.out.println("9. Display Action History / Stack (LIFO)");
+            System.out.println("--- Student Service Desk (Queue - FIFO) ---");
+            System.out.println("10. Add Student Service Request (FIFO)");
+            System.out.println("11. Serve Next Student Request (FIFO)");
+            System.out.println("12. Display Pending Service Requests (FIFO)");
+            System.out.println("13. Exit");
 
             System.out.print("Enter your choice: ");
 
@@ -34,68 +44,97 @@ public class Main {
             }
 
             switch (choice) {
-
-                case 1:
+                case 1 -> {
                     System.out.print("Enter campus location: ");
                     String location = scanner.nextLine();
-
-                    campusGraph.addLocation(location);
-                    break;
-
-                case 2:
+                    if (campusGraph.addLocation(location)) {
+                        actionStack.push("Added location: " + location.trim());
+                    }
+                }
+                case 2 -> {
                     System.out.print("Enter location to remove: ");
                     String removeLocation = scanner.nextLine();
-
-                    campusGraph.removeLocation(removeLocation);
-                    break;
-
-                case 3:
+                    if (campusGraph.removeLocation(removeLocation)) {
+                        actionStack.push("Removed location: " + removeLocation.trim());
+                    }
+                }
+                case 3 -> {
                     System.out.print("Enter source location: ");
                     String source = scanner.nextLine();
-
                     System.out.print("Enter destination location: ");
                     String destination = scanner.nextLine();
-
-                    campusGraph.addConnection(source, destination);
-                    break;
-
-                case 4:
+                    if (campusGraph.addConnection(source, destination)) {
+                        actionStack.push("Added road: " + source.trim() + " <-> " + destination.trim());
+                    }
+                }
+                case 4 -> {
                     System.out.print("Enter source location: ");
                     String removeSource = scanner.nextLine();
-
                     System.out.print("Enter destination location: ");
                     String removeDestination = scanner.nextLine();
-
-                    campusGraph.removeConnection(
-                            removeSource,
-                            removeDestination
-                    );
-                    break;
-
-                case 5:
-                    campusGraph.displayConnections();
-                    break;
-
-                case 6:
-                    campusGraph.displayLocations();
-                    break;
-
-                case 7:
+                    if (campusGraph.removeConnection(removeSource, removeDestination)) {
+                        actionStack.push("Removed road: " + removeSource.trim() + " <-> " + removeDestination.trim());
+                    }
+                }
+                case 5 -> campusGraph.displayConnections();
+                case 6 -> campusGraph.displayLocations();
+                case 7 -> {
                     System.out.print("Enter starting location for BFS: ");
                     String startLocation = scanner.nextLine();
-
                     campusGraph.bfs(startLocation);
-                    break;
-
-                case 8:
+                }
+                case 8 -> undoLastAction(actionStack, campusGraph);
+                case 9 -> actionStack.displayStack();
+                case 10 -> {
+                    System.out.print("Enter student service request: ");
+                    String request = scanner.nextLine();
+                    serviceQueue.enqueue(request);
+                }
+                case 11 -> serviceQueue.dequeue();
+                case 12 -> serviceQueue.displayQueue();
+                case 13 -> {
                     System.out.println("Exiting program...");
                     scanner.close();
                     return;
+                }
+                default -> System.out.println("Invalid choice. Please select 1-13.");
+            }
+        }
+    }
 
-                default:
-                    System.out.println(
-                            "Invalid choice. Please select 1-8."
-                    );
+    // Helper method to demonstrate LIFO Undo (Last In, First Out)
+    private static void undoLastAction(ActionStack actionStack, Graph campusGraph) {
+        if (actionStack.isEmpty()) {
+            System.out.println("No actions to undo. Stack is empty.");
+            return;
+        }
+
+        System.out.println("\n--- Undoing Last Action (LIFO: Last In, First Out) ---");
+        String lastAction = actionStack.pop();
+
+        if (lastAction == null) return;
+
+        if (lastAction.startsWith("Added location: ")) {
+            String location = lastAction.substring("Added location: ".length());
+            System.out.println("Reverting addition of location: " + location);
+            campusGraph.removeLocation(location);
+        } else if (lastAction.startsWith("Removed location: ")) {
+            String location = lastAction.substring("Removed location: ".length());
+            System.out.println("Reverting removal of location: " + location);
+            campusGraph.addLocation(location);
+        } else if (lastAction.startsWith("Added road: ")) {
+            String conn = lastAction.substring("Added road: ".length());
+            String[] parts = conn.split(" <-> ");
+            if (parts.length == 2) {
+                System.out.println("Reverting addition of road: " + parts[0] + " <-> " + parts[1]);
+                campusGraph.removeConnection(parts[0], parts[1]);
+            }
+        } else if (lastAction.startsWith("Removed road: ")) {
+            String conn = lastAction.substring("Removed road: ".length());
+            String[] parts = conn.split(" <-> ");
+            if (parts.length == 2) {
+                System.out.println("Reverting removal of road: " + parts[0] + " <-> " + parts[1]);
+                campusGraph.addConnection(parts[0], parts[1]);
             }
         }
     }
