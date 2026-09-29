@@ -1,3 +1,5 @@
+package university.tests;
+
 import university.model.Student;
 import university.linkedlist.StudentLinkedList;
 
