@@ -1,4 +1,9 @@
+package university;
+
 import java.util.Scanner;
+import university.graph.CampusGraph;
+import university.stackqueue.ActionStack;
+import university.stackqueue.ServiceQueue;
 
 public class Main {
 
@@ -6,7 +11,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        Graph campusGraph = new Graph();
+        CampusGraph campusGraph = new CampusGraph();
         ActionStack actionStack = new ActionStack();
         ServiceQueue serviceQueue = new ServiceQueue();
 
@@ -103,7 +108,7 @@ public class Main {
     }
 
     // Helper method to demonstrate LIFO Undo (Last In, First Out)
-    private static void undoLastAction(ActionStack actionStack, Graph campusGraph) {
+    private static void undoLastAction(ActionStack actionStack, CampusGraph campusGraph) {
         if (actionStack.isEmpty()) {
             System.out.println("No actions to undo. Stack is empty.");
             return;

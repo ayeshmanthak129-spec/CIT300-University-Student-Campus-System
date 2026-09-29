@@ -7,7 +7,7 @@ import java.util.*;
  * Represents campus locations and connections (roads/paths)
  * using an Adjacency List (LinkedHashMap of LinkedHashSets).
  */
-public class Graph {
+public class CampusGraph {
 
     // Adjacency List: Maps each location to a set of connected neighbouring locations
     private final Map<String, Set<String>> adjacencyList;
@@ -15,7 +15,7 @@ public class Graph {
     /**
      * Default Constructor
      */
-    public Graph() {
+    public CampusGraph() {
         this.adjacencyList = new LinkedHashMap<>();
     }
 
