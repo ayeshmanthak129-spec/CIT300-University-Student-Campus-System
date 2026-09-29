@@ -4,19 +4,25 @@ import university.model.Student;
 
 public class StudentLinkedList {
 
+    private Node head;
+
     private static class Node {
-        Student data;
+        Student student;
         Node next;
 
-        Node(Student data) {
-            this.data = data;
+        Node(Student student) {
+            this.student = student;
+            this.next = null;
         }
     }
 
-    private Node head;
+    public boolean addStudent(Student student) {
 
-    public boolean add(Student student) {
-        if (search(student.getStudentId()) != null) {
+        if (student == null) {
+            return false;
+        }
+
+        if (searchStudent(student.getStudentId()) != null) {
             return false;
         }
 
@@ -34,17 +40,17 @@ public class StudentLinkedList {
         }
 
         current.next = newNode;
-
         return true;
     }
 
-    public Student search(int studentId) {
+    public Student searchStudent(int studentId) {
+
         Node current = head;
 
         while (current != null) {
 
-            if (current.data.getStudentId() == studentId) {
-                return current.data;
+            if (current.student.getStudentId() == studentId) {
+                return current.student;
             }
 
             current = current.next;
@@ -53,12 +59,12 @@ public class StudentLinkedList {
         return null;
     }
 
-    public boolean update(int studentId,
-                          String name,
-                          String programme,
-                          double marks) {
+    public boolean updateStudent(int studentId,
+                                 String name,
+                                 String programme,
+                                 double marks) {
 
-        Student student = search(studentId);
+        Student student = searchStudent(studentId);
 
         if (student == null) {
             return false;
@@ -71,40 +77,33 @@ public class StudentLinkedList {
         return true;
     }
 
-    public Student remove(int studentId) {
+    public boolean deleteStudent(int studentId) {
 
         if (head == null) {
-            return null;
+            return false;
         }
 
-        if (head.data.getStudentId() == studentId) {
-
-            Student removed = head.data;
+        if (head.student.getStudentId() == studentId) {
             head = head.next;
-
-            return removed;
+            return true;
         }
 
         Node current = head;
 
         while (current.next != null) {
 
-            if (current.next.data.getStudentId() == studentId) {
-
-                Student removed = current.next.data;
-
+            if (current.next.student.getStudentId() == studentId) {
                 current.next = current.next.next;
-
-                return removed;
+                return true;
             }
 
             current = current.next;
         }
 
-        return null;
+        return false;
     }
 
-    public void display() {
+    public void displayStudents() {
 
         if (head == null) {
             System.out.println("No student records found.");
@@ -114,10 +113,25 @@ public class StudentLinkedList {
         Node current = head;
 
         while (current != null) {
-
-            System.out.println(current.data);
-
+            System.out.println(current.student);
             current = current.next;
         }
+    }
+
+    public boolean isEmpty() {
+        return head == null;
+    }
+
+    public int size() {
+
+        int count = 0;
+        Node current = head;
+
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+
+        return count;
     }
 }
